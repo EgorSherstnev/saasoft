@@ -3,6 +3,7 @@ import { onMounted } from 'vue'
 import AccountItem from './AccountItem.vue'
 import { useAccountsStore } from '@/stores'
 import { QuestionCircleOutlined } from '@ant-design/icons-vue'
+import { HEADERS } from '../constants'
 
 const store = useAccountsStore()
 
@@ -28,13 +29,6 @@ onMounted(() => {
       <a-button type="primary" @click="store.addAccount">+</a-button>
     </div>
 
-    <a-typography-text type="secondary" style="font-size: 12px">
-      Для указания нескольких меток
-      <a-tooltip title="Разделитель ;">
-        <QuestionCircleOutlined style="margin-left: 4px; cursor: pointer" />
-      </a-tooltip>
-    </a-typography-text>
-
     <div
       style="
         display: grid;
@@ -44,11 +38,16 @@ onMounted(() => {
         font-weight: 500;
       "
     >
-      <div>Метки</div>
-      <div>Тип</div>
-      <div>Логин</div>
-      <div>Пароль</div>
-      <div></div>
+      <div
+        v-for="header in HEADERS"
+        :key="header.key"
+        style="display: flex; align-items: center; justify-content: center; gap: 4px"
+      >
+        <span>{{ header.text }}</span>
+        <a-tooltip v-if="header.tooltip" :title="header.tooltip">
+          <QuestionCircleOutlined style="font-size: 12px; color: #8c8c8c; cursor: help" />
+        </a-tooltip>
+      </div>
     </div>
 
     <div style="margin-top: 8px">
