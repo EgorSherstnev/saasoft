@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
-import { useAccountsStore } from '@/stores/accounts'
 import type { IAccount } from '@/types'
 import { DeleteOutlined } from '@ant-design/icons-vue'
+import { useAccountsStore } from '@/stores'
 
 const props = defineProps<{ account: IAccount }>()
 const store = useAccountsStore()
@@ -70,53 +70,59 @@ const type = computed({
 </script>
 
 <template>
-  <a-card size="small" style="margin-bottom: 12px">
-    <a-form layout="inline" style="flex-wrap: wrap; gap: 12px">
-      <a-form-item label="Метки">
-        <a-input
-          :value="account.labels.map((l) => l.text).join('; ')"
-          @blur="onLabelChange(($event.target as HTMLInputElement).value)"
-          placeholder="Метки"
-          maxlength="50"
-        />
-      </a-form-item>
+  <a-card
+    size="small"
+    :bordered="false"
+    :body-style="{ marginBottom: '12px' }"
+    style="box-shadow: none"
+  >
+    <div
+      :style="{
+        display: 'grid',
+        gridTemplateColumns: '1fr 120px 1fr 1fr 40px',
+        gap: '12px',
+        alignItems: 'center',
+      }"
+    >
+      <a-input
+        :value="account.labels.map((l) => l.text).join('; ')"
+        @blur="onLabelChange(($event.target as HTMLInputElement).value)"
+        placeholder="Метки"
+        maxlength="50"
+      />
 
-      <a-form-item label="Тип">
-        <a-select v-model:value="type" style="width: 120px">
-          <a-select-option value="Локальная">Локальная</a-select-option>
-          <a-select-option value="LDAP">LDAP</a-select-option>
-        </a-select>
-      </a-form-item>
+      <a-select v-model:value="type">
+        <a-select-option value="Локальная">Локальная</a-select-option>
+        <a-select-option value="LDAP">LDAP</a-select-option>
+      </a-select>
 
-      <a-form-item label="Логин" :validate-status="loginError ? 'error' : ''">
-        <a-input v-model:value="login" @blur="onLoginBlur" placeholder="Логин" maxlength="100" />
-      </a-form-item>
+      <a-input
+        v-model:value="login"
+        @blur="onLoginBlur"
+        placeholder="Логин"
+        maxlength="100"
+        :status="loginError ? 'error' : ''"
+      />
 
-      <a-form-item
+      <a-input-password
         v-if="account.type === 'Локальная'"
-        label="Пароль"
-        :validate-status="passwordError ? 'error' : ''"
-      >
-        <a-input-password
-          v-model:value="password"
-          @blur="onPasswordBlur"
-          placeholder="Пароль"
-          maxlength="100"
-        />
-      </a-form-item>
+        v-model:value="password"
+        @blur="onPasswordBlur"
+        placeholder="Пароль"
+        maxlength="100"
+        :status="passwordError ? 'error' : ''"
+      />
 
-      <a-form-item>
-        <a-popconfirm
-          title="Удалить аккаунт?"
-          ok-text="Да"
-          cancel-text="Нет"
-          @confirm="store.removeAccount(account.id)"
-        >
-          <a-button type="text">
-            <DeleteOutlined />
-          </a-button>
-        </a-popconfirm>
-      </a-form-item>
-    </a-form>
+      <a-popconfirm
+        title="Удалить аккаунт?"
+        ok-text="Да"
+        cancel-text="Нет"
+        @confirm="store.removeAccount(account.id)"
+      >
+        <a-button type="text">
+          <DeleteOutlined />
+        </a-button>
+      </a-popconfirm>
+    </div>
   </a-card>
 </template>
